@@ -89,14 +89,13 @@ Your task is to decide whether a comment violates a given norm.
 
 Rules:
 - Use ONLY the comment text
-- Do NOT assume a violation unless clearly present
-- If uncertain, predict NON_VIOLATION
+- Count as a violation if their is explicit evidence
 - Output MUST be valid JSON
 """
 
 def make_prompt(comment, norm):
     return f"""
-NORM CATEGORIES:
+NORM TO CHECK:
 \"\"\"{norm}\"\"\"
 
 COMMENT:
@@ -105,8 +104,8 @@ COMMENT:
 Respond with JSON in this format:
 {{
   "label": violation or non_violation,
-  "violated_norm": violated norm,
-  "confidence": number between 0 and 1
+  "checked_norm": violated norm,
+  "evidence": subsequence from the text
 }}
 """
 
@@ -123,7 +122,7 @@ def predictViolation(comment, norm):
             {"role": "system", "content": predictLabelSysPrompt},
             {"role": "user", "content": make_prompt(comment, norm)}
         ],
-        "max_tokens": 150,
+        "max_tokens": 1000,
         "temperature": 0.0
     }
 
