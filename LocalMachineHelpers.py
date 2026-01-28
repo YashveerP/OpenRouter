@@ -62,7 +62,7 @@ def localPredictViolation(comment, norm):
         ],
         options={
             "temperature": 0.0,
-            "max_tokens": 300
+            "max_tokens": 1000
         }
     )
 

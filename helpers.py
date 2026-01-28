@@ -15,12 +15,13 @@ url = "https://openrouter.ai/api/v1/chat/completions"
 
 # dataset
 data = pd.read_csv('data_training_selected_clusters_comments_and_rules.csv')
-NORMS = sorted(
-    data["target_reason"]
-    .dropna()
-    .unique()
-    .tolist()
+subredditToNorms = (
+    data[data["label"] == "violation"]
+    .groupby("subreddit_id")["target_reason"]
+    .apply(lambda x: x.dropna().unique().tolist())
+    .to_dict()
 )
+
 
 # Input an array of social norms. Outputs a system prompt using those norms
 def followNormsSysPrompt(norms) :
@@ -141,6 +142,10 @@ def predictViolation(comment, norm):
     return match.group(0)
 
 
-def getRandomNorm():
-    return random.choice(NORMS)
+def getRandomNormForSubreddit(subreddit_id):
+    norms = subredditToNorms.get(subreddit_id, [])
+    if not norms:
+        return None  # or "irrelevant_norm"
+    return random.choice(norms)
+
 
