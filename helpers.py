@@ -1,3 +1,4 @@
+import random
 import requests, re
 from dotenv import load_dotenv
 import os
@@ -104,8 +105,7 @@ COMMENT:
 Respond with JSON in this format:
 {{
   "label": violation or non_violation,
-  "checked_norm": violated norm,
-  "evidence": subsequence from the text
+  "evidence": EXACT substring copied verbatim from the input text
 }}
 """
 
@@ -141,5 +141,6 @@ def predictViolation(comment, norm):
     return match.group(0)
 
 
-
+def getRandomNorm():
+    return random.choice(NORMS)
 
